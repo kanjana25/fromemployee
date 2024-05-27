@@ -1,15 +1,42 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedstatus, setSelectedstatus] = useState('')
+    const [data, setData] = useState([]); 
     const navigate = useNavigate();
 
-    const handleStatusChang = (e) => {
-        const selectedstatus = e.target.value;
-        setSelectedstatus(selectedstatus);
+    useEffect(() =>{
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:3200/applications');
+                setData(response.data); 
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, [])
+
+    const handleStatusChang = async (e, _id) => {
+        const newStatus = e.target.value;
+        setSelectedstatus(newStatus);
+        try {
+            setData(prevData => 
+                prevData.map(row => 
+                    row._id === _id ? { ...row, status: newStatus } : row
+                )
+            );
+           await axios.put(`http://localhost:3200/applications/${_id}`, { 
+            status: newStatus 
+        });
+           
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
     }
 
     const handleDateChange = (event) => {
@@ -17,18 +44,12 @@ export default function Admin() {
         setSelectedDate(selectedDate);
     };
     
-    const data = [
-        { id: 1, name: 'John', position: 'Developer', details: 'Details about John', status: 'ผ่าน', contract: 'Contract details', date: '2024-05-09' },
-        { id: 2, name: 'Alice', position: 'Designer', details: 'Details about Alice', status: 'รอดำเนินการ', contract: 'Contract details', date: '2024-05-10' },
-        { id: 3, name: 'Bob', position: 'Manager', details: 'Details about Bob', status: 'ไม่ผ่าน', contract: 'Contract details', date: '2024-05-11' },
-        { id: 4, name: 'Diana', position: 'Marketing', details: 'Details about Diana', status: 'ผ่าน', contract: 'Contract details', date: '2024-05-12' },
-    ];
-
     const handleDetail = (row) => {
         // ! กลับมาเปลี่ยน url ด้วยถ้าหลังบ้านเสร็จ `/details/${row.id}`
-        navigate('/page-one');
+        navigate(`/page-one/${row._id}`);
         console.log("ดูรายละเอียดของ:", row);
     };
+
     const handleContract = (id) => {
         
         console.log("ดูใบสัญญาของแถวที่:", id);
@@ -78,7 +99,7 @@ export default function Admin() {
                                 animation: 'none',outline: 'none',}}>
                                 <option value="" >วัน / เดือน / ปี</option>
                                 {data.map((row) => (
-                                <option key={row.date} value={row.date}>{formatDate(row.date)}</option>
+                                <option key={row._id} value={row.date}>{formatDate(row.date)}</option>
                                 ))}
                              </select>
                             </div>
@@ -133,8 +154,9 @@ export default function Admin() {
                     <tbody>
                     {data
                     .filter((row) => selectedDate === '' || row.date === selectedDate)
+                    .sort((a, b) => new Date(a.date) - new Date(b.date))
                     .map((row) => (
-                        <tr key={row.id}>
+                        <tr key={row._id}>
                             <td>
                                 <div style={{
                                 borderRadius:' 15px 15px ',
@@ -170,7 +192,7 @@ export default function Admin() {
                             </td>
                             <td >
                                 <div style={{display:'flex',justifyContent: 'center',}}>
-                                <button onClick={() => handleDetail(row)} style={{
+                                <button key={row.id}  onClick={() => handleDetail(row)} style={{
                                     backgroundColor: '#EF4923',
                                     borderRadius: '15px',
                                     border: 'none',
@@ -180,24 +202,30 @@ export default function Admin() {
                                 </div>
                             </td>
                             <td>
-                                <div  style={{backgroundColor: getStatusColor(row.status),color:'#fff',
-                                    borderRadius: '15px',
-                                    border: 'none',
-                                    height: '2.3rem',width: '5rem',textAlign:'center',
-                                    fontSize:'15px',paddingTop:'2px',fontFamily:'Inter',cursor:'pointer'}}>
-                                <select value={selectedstatus} onChange={handleStatusChang} style={{ 
-                                    backgroundColor: getStatusColor(selectedstatus),
-                                    appearance: 'none',animation: 'none',outline: 'none',
-                                    borderRadius: '15px',
-                                    border: 'none',boxShadow:'0 2px #BFBFBF',
-                                    height: '2.3rem',width: '5rem',textAlign:'center',
-                                    fontSize:'15px',fontFamily:'Inter',
-                                    cursor:'pointer',color:'#fff'}}>
-                                    <option value="Passed">ผ่าน</option>
-                                    <option value="Failed">ไม่ผ่าน</option>
-                                    <option value="Pending">รอดำเนินการ</option>
+                            <div  style={{ 
+                                backgroundColor: getStatusColor(row.status), color:'#fff',
+                                borderRadius: '15px', border: 'none', height: '2.3rem', width: '5rem', textAlign:'center',
+                                fontSize:'15px', paddingTop:'2px', fontFamily:'Inter', cursor:'pointer'
+                            }}>
+                                <select key={row._id}
+                                    value={row.status} 
+                                    onChange={(e) => handleStatusChang(e, row._id)} 
+                                    style={{ 
+                                        backgroundColor: getStatusColor(selectedstatus), appearance: 'none', animation: 'none', outline: 'none',
+                                        borderRadius: '15px', border: 'none', boxShadow:'0 2px #BFBFBF',
+                                        height: '2.3rem', width: '5rem', textAlign:'center', fontSize:'15px', fontFamily:'Inter',
+                                        cursor:'pointer', color:'#fff'
+                                    }}>
+                                    {data.map(row => (
+                                    <option key={row._id} value={row.status}>{row.status}</option>
+                                    ))}
+                                    {!data.some((value) => value.status === "ผ่าน") && <option value="ผ่าน">ผ่าน</option>}
+                                    {!data.some((value) => value.status === "ไม่ผ่าน") && <option value="ไม่ผ่าน">ไม่ผ่าน</option>}
+                                    {!data.some((value) => value.status === "รอดำเนินการ") && <option value="รอดำเนินการ">รอดำเนินการ</option>}
+                                
                                 </select>
-                                </div>
+                            </div>
+
                             </td>
                             <td>
                             {row.status === "รอดำเนินการ" && (

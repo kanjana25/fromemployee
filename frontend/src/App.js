@@ -16,7 +16,7 @@ function App() {
       <Routes>
           <Route path="/" element={<Page />}/> 
           {/* <Route path='/detail' element={<Detail />} /> */}
-          <Route path="/page-one" element={<Detail />} />
+          <Route path='page-one/:id'element={<Detail />} />
           <Route path="/page-two" element={<PageTwo />} />
       </Routes>
         
