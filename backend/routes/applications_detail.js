@@ -85,27 +85,80 @@ router.post('/', async (req, res) => {
 
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // ระบุโฟลเดอร์ที่จะบันทึกไฟล์
+        cb(null,'uploads/'); 
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname); // กำหนดชื่อไฟล์ใหม่
+        cb(null, Date.now() + '-' + file.originalname); 
     }
 });
 
 const upload = multer({ storage: storage });
 
-    router.post('/upload/photo', upload.single('photo'), (req, res) => {
+    router.post('/upload/photo', upload.single('photo'),async (req, res) => {
+    try {
     const file = req.file;
     if (!file) {
         return res.status(400).send('Please upload a file');
     }
-    const applicationId = req.body.applicationId; // รับ applicationId จากคำขอ
-    Application.findByIdAndUpdate(applicationId, { photoName: file.originalname }, (err, doc) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        return res.status(200).send('File uploaded successfully');
-    });
+    const applicationId = req.body.applicationId; 
+    const update = { image: {
+      filename: file.filename,
+      path: file.path.replace(/\\/g, '/'),
+      size: file.size,
+      uploadDateImage: Date.now()
+  }};
+    
+  const updatedApplication = await Application.findByIdAndUpdate(applicationId, update, { new: true });
+  if (!updatedApplication) {
+      return res.status(404).send('Application not found');
+  }
+
+  res.status(200).send(updatedApplication);
+} catch (error) {
+  res.status(500).send(error);
+}
 });
+
+const uploads = multer({ storage: storage }).array('files', 10);
+
+router.post('/upload/file', uploads, async (req, res) => {
+  try {
+    const files = req.files; 
+    if (!files || files.length === 0) {
+      return res.status(400).send('Please upload at least one file');
+    }
+
+    const applicationId = req.body.applicationId; 
+    if (!applicationId) {
+      return res.status(400).send('Please provide an application ID');
+    }
+
+    const filesData = files.map(file => ({
+      filename: file.filename,
+      path: file.path.replace(/\\/g, '/'),
+      size: file.size,
+      uploadDateFile: Date.now()
+    }));
+
+    const updatedApplication = await Application.findByIdAndUpdate(
+      applicationId, 
+      { $push: { files: { $each: filesData } } }, 
+      { new: true }
+    );
+
+    if (!updatedApplication) {
+      return res.status(404).send('Application not found');
+    }
+    res.status(201).send(updatedApplication);
+    console.log('Files uploaded successfully');
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    res.status(400).send(error);
+  }
+});
+
+
+
+
 
   module.exports = router;

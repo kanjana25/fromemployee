@@ -16,8 +16,8 @@ function App() {
       <Routes>
           <Route path="/" element={<Page />}/> 
           {/* <Route path='/detail' element={<Detail />} /> */}
-          <Route path='page-one/:id'element={<Detail />} />
-          <Route path="/page-two" element={<PageTwo />} />
+          <Route path='/page-one/:id'element={<Detail />} />
+          <Route path="/page-two/:id" element={<PageTwo />} />
       </Routes>
         
          

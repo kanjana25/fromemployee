@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AsyncSelect from 'react-select/async';
 
 export default function Admin() {
     const [selectedDate, setSelectedDate] = useState('');
@@ -39,10 +40,16 @@ export default function Admin() {
         }
     }
 
-    const handleDateChange = (event) => {
-        const selectedDate = event.target.value;
-        setSelectedDate(selectedDate);
+    const handleDateChange = (selectedOption) => {
+        console.log(selectedOption);
+        if (selectedOption && selectedOption.value) { // ตรวจสอบว่า selectedOption และ selectedOption.value มีค่าหรือไม่
+            setSelectedDate(selectedOption.value); // ถ้ามีค่า ให้กำหนดค่าเป็น selectedOption.value
+        } else {
+            setSelectedDate(null); // ถ้าไม่มีค่า ให้กำหนดค่าเป็น null
+        }
     };
+    
+    
     
     const handleDetail = (row) => {
         // ! กลับมาเปลี่ยน url ด้วยถ้าหลังบ้านเสร็จ `/details/${row.id}`
@@ -73,7 +80,19 @@ export default function Admin() {
         }
     };
 
-
+    const loadOptions = (inputValue) => {
+        const filteredOptions = data
+            .filter(row => row.date.includes(inputValue))
+            .map(row => ({
+                value: row.date, 
+                label: formatDate(row.date),
+            }));
+            console.log(filteredOptions)
+        return filteredOptions;
+    };
+    
+    
+    
     return (
         <div style={{height:'100vh'}}>
             <h1  style={{textShadow: '2px 2px 4px #BFBFBF',color:'#EF4923'}}>รายชื่อผู้สมัครงาน</h1>
@@ -89,19 +108,57 @@ export default function Admin() {
                                 backgroundColor:'#EF4923',
                                 height:'2.5rem',padding:'4px',
                                 alignContent:'center',marginBottom:'2px'}}>
-                             <select value={selectedDate} onChange={handleDateChange} 
-                             style={{
-                                backgroundColor:'#EF4923',
-                                border:'none',color:'#fff',
-                                padding:'0 0 3px 3px ', 
-                                cursor: 'pointer',margin:'3px',
-                                fontSize:'16px',
-                                animation: 'none',outline: 'none',}}>
-                                <option value="" >วัน / เดือน / ปี</option>
-                                {data.map((row) => (
-                                <option key={row._id} value={row.date}>{formatDate(row.date)}</option>
-                                ))}
-                             </select>
+                                <AsyncSelect
+                                    cacheOptions
+                                    loadOptions={loadOptions}
+                                    defaultOptions
+                                    value={selectedDate}
+                                    onChange={handleDateChange}
+                                    styles={{
+                                    control: (provided) => ({
+                                        ...provided,
+                                        backgroundColor: '#EF4923',
+                                        border: 'none',
+                                        color: '#fff',
+                                        borderRadius:'4rem'
+                                    }),
+                                    singleValue: (provided) => ({
+                                        ...provided,
+                                        color: '#fff',
+                                    }),
+                                    placeholder: (provided) => ({
+                                        ...provided,
+                                        color: '#fff',
+                                    }),
+                                    input: (provided) => ({
+                                        ...provided,
+                                        color: '#fff',
+                                    }),
+                                    menu: (provided) => ({
+                                        ...provided,
+                                        backgroundColor: '#EF4923',
+                                    }),
+                                    option: (provided, state) => ({
+                                        ...provided,
+                                        color: state.isSelected ? '#EF4923' : '#fff',
+                                        backgroundColor: state.isSelected ? '#fff' : '#EF4923',
+                                    }),
+                                    dropdownIndicator: (provided) => ({
+                                        ...provided,
+                                        color: '#fff',
+                                    }),
+                                    indicatorSeparator: (provided) => ({
+                                        ...provided,
+                                        backgroundColor: 'none',
+                                    }),
+                                    clearIndicator: (provided) => ({
+                                        ...provided,
+                                        color: '#fff',
+                                    }),
+                                    }}
+                                    placeholder={selectedDate ? formatDate(selectedDate) : "วัน / เดือน / ปี"}
+                                    isClearable
+                                />    
                             </div>
                             </th>
                             <th>

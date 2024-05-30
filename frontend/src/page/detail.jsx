@@ -53,14 +53,17 @@ function PageOne() {
            
             <div>
               <p><strong>วันที่เริ่มงาน</strong> {formatDate(data.appy_date)}</p>
-            <div style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
-                    columnGap: '20px', rowGap: '10px' }}>
-              <p style={{  }}><strong>ตำแหน่ง</strong> {data.position}</p> 
-              <p style={{ }}><strong>หน่วยงาน</strong> {data.depertment}</p>
-            </div>
-            <div style={{ position: 'absolute', top: '10rem', right: '3rem',width: '13rem', height: '15rem' }}>
-                {data.image && data.image.path && <img src={data.image.path} alt="Profile" style={{  objectFit: 'cover' }} />}
-            </div>
+            <div>
+              <div style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
+                      columnGap: '20px', rowGap: '10px', }}>
+                <p style={{  }}><strong>ตำแหน่ง</strong> {data.position}</p> 
+                <p style={{ }}><strong>หน่วยงาน</strong> {data.depertment}</p>
+              </div>
+              <div style={{ position: 'absolute', top: '20vh', right: '11vw',width: '10rem', height: '13rem' }}>
+                  {data.image && data.image.path && <img src={`http://localhost:3200/${data.image.path}`} alt="Profile" 
+                  style={{  objectFit: 'cover', width: '100%', height: '100%' }} />}
+              </div>
+              </div>
             </div>
 
             {data.referrer && (
@@ -96,8 +99,12 @@ function PageOne() {
                 <p><strong>รายละเอียดส่วนตัว</strong></p>
                 <div  style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
                     columnGap: '20px', rowGap: '10px' }}>
-                <p>ชื่อ {data.name}</p> <p>สัญชาติ {data.nationality}</p> <p>เชื้อชาติ {data.ethnicity}</p> <p>ศาสนา {data.religion}</p>
-                <p>เกิดวันที่ {formatDate(data.birth_date)}</p> <p>อายุ {data.age}</p> <p>สถานที่เกิด {data.birth_place}</p>
+                <p>ชื่อ {data.name}</p> 
+                <p>สัญชาติ {data.nationality}</p> 
+                <p>เชื้อชาติ {data.ethnicity}</p> 
+                <p>ศาสนา {data.religion}</p>
+                <p>เกิดวันที่ {formatDate(data.birth_date)}</p> 
+                <p>อายุ {data.age}</p> <p>สถานที่เกิด {data.birth_place}</p>
                 </div>
             </div>
 
@@ -106,77 +113,133 @@ function PageOne() {
                 <p><strong>ที่อยู่ตามบัตรประชาชน</strong></p>
                 <div  style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
                     columnGap: '20px', rowGap: '10px' }}>
-                <p>เลขที่ {data.contact_detail.current_address.address_line}</p> <p>หมู่ที่ {data.contact_detail.current_address.moo}</p> <p>ตรอก/ซอย {data.contact_detail.current_address.alley}</p> <p>ถนน {data.contact_detail.current_address.road}</p> <p>ตำบล/แขวง {data.contact_detail.current_address.sub_district}</p>
-                <p>อำเภอ {data.contact_detail.current_address.district}</p> <p>จังหวัด {data.contact_detail.current_address.province}</p> <p>รหัสไปรษณีย์ {data.contact_detail.current_address.postal_code}</p> <p>โทรศัพท์ {data.contact_detail.phone}</p>
+                <p>เลขที่ {data.contact_detail.current_address.address_line}</p> 
+                <p>หมู่ที่ {data.contact_detail.current_address.moo}</p> 
+                <p>ตรอก/ซอย {data.contact_detail.current_address.alley}</p> 
+                <p>ถนน {data.contact_detail.current_address.road}</p> 
+                <p>ตำบล/แขวง {data.contact_detail.current_address.sub_district}</p>
+                <p>อำเภอ {data.contact_detail.current_address.district}</p> 
+                <p>จังหวัด {data.contact_detail.current_address.province}</p> 
+                <p>รหัสไปรษณีย์ {data.contact_detail.current_address.postal_code}</p> 
+                <p>โทรศัพท์ {data.contact_detail.phone}</p>
                 <p>บัตรประชาชนเลขที่ {data.id_card_number}</p> <p>ออก ณ ที่ว่าการเขต {data.id_card_issus_place}</p> <p>จังหวัด {data.id_card_province}</p>
                 </div>
             </div>
             )}
             
+            {data.contact_detail && data.contact_detail.permanent_address && (
             <div style={{margin:'2rem 0'}}>
             <p><strong>ที่อยู่ปัจจุบันที่สามารถติดต่อได้</strong></p>
+            
               <div  style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
                     columnGap: '20px', rowGap: '10px' }}>
-                <p>สถานะ {data.contact_detail.permanent_address.status}</p> <p>เลขที่</p>  <p>หมู่ที่</p> <p>ตรอก/ซอย</p> <p>ถนน</p> 
-                <p>ตำบล/แขวง</p> <p>อำเภอ</p> <p>จังหวัด</p> <p>รหัสไปรษณีย์</p>
-                <p>โทรศัพท์มือถือ {data.contact_detail.phone}</p> <p>โทรศัพท์ที่สมารถติดต่อได้</p>
+                <p>{data.contact_detail.permanent_address.status}</p> <p>เลขที่ {data.contact_detail.permanent_address.address_line}</p>  
+                <p>หมู่ที่ {data.contact_detail.permanent_address.moo}</p> 
+                <p>ตรอก/ซอย {data.contact_detail.permanent_address.alley}</p> 
+                <p>ถนน {data.contact_detail.permanent_address.road}</p> 
+                <p>ตำบล/แขวง {data.contact_detail.permanent_address.sub_district}</p> 
+                <p>อำเภอ {data.contact_detail.permanent_address.district}</p> 
+                <p>จังหวัด {data.contact_detail.permanent_address.province}</p> 
+                <p>รหัสไปรษณีย์ {data.contact_detail.permanent_address.postal_code}</p>
+                <p>โทรศัพท์มือถือ {data.contact_detail.mobile_phone}</p> 
+                <p>โทรศัพท์ที่สมารถติดต่อได้ {data.contact_detail.phone}</p>
              </div>
+            
             </div>
-            <p><strong>สถานะครอบครัว - </strong></p>     
+            )}
+
+
+            <p><strong>สถานะครอบครัว - {data.marital_status}</strong> </p>     
             {/* ! ถ้ามีสถานะจะมีข้อมูลตัวอื่นขึ้นมาด้วย */}
-            <FamilyStatus />
+            <FamilyStatus status={data.marital_status} data={data} />
             
             <div>
               <p><strong>บิดา - มารดาผู้สมัคร</strong></p>
               <div style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
                     columnGap: '20px', rowGap: '10px' }}>
-              <p>ชื่อ</p> <p>อายุ</p> <p>อาชีพ</p>
+              {data.parent && data.parent.father ? (
+                <>
+                  <p>ชื่อ บิดา {data.parent.father.father_name}</p>
+                  <p>อายุ {data.parent.father.father_age}</p>
+                  <p>อาชีพ {data.parent.father.father_occupation}</p>
+                </>
+                 ) : (
+                  <p>ไม่มีข้อมูล</p>
+              )}
               </div>
               <div style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
                     columnGap: '20px', rowGap: '10px' }}>
-              <p>ชื่อ</p> <p>อายุ</p> <p>อาชีพ</p>
+              {data.parent && data.parent.mather  ? (
+                <>
+                  <p>ชื่อ มารดา {data.parent.mather.mather_name}</p>
+                  <p>อายุ {data.parent.mather.mather_age}</p>
+                  <p>อาชีพ {data.parent.mather.mather_occupation}</p>
+                </>
+                  ) : (
+                    <p>ไม่มีข้อมูล</p>
+              
+              )}
               </div>
             </div>
             </div>
 
             <div style={{display:'flex',alignContent:'center',justifyContent:'center',margin:'2rem 0'}}>
-                <button onClick={() => navigate('/page-one')} style={{
+                <button onClick={() => navigate('/')} style={{
                 backgroundColor:'#EF4923',color:'#fff',border:'none',boxShadow:'none',
-                width:'2rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}} >1</button>
-                <button onClick={() => navigate('/page-two')} style={{
-                backgroundColor:'#D9D9D9',color:'#fff',border:'none',boxShadow:'none',
-                width:'2rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}}>2</button>
+                width:'4rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}} >ย้อนกลับ</button>
+                <button onClick={() => navigate(`/page-two/${id}`)} style={{
+                backgroundColor:'#EF4923',color:'#fff',border:'none',boxShadow:'none',
+                width:'4rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}} >ถัดไป</button>
             </div>
         </div>   
     )
 }
 
-function FamilyStatus(props) {
-    const { status } = props;
-  
+function FamilyStatus({ status, data }) {
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('th-TH', options);
+  };
     return (
       <div>
         {status && (
           <div>
             {/* ! ตรวจสอบสถานะและแสดงข้อมูลเฉพาะเมื่อมีสถานะ */}
-            {status === 'Married' && (
-              <p><strong>ทะเบียนสมรส</strong></p>
+            {status === 'แต่งงานแล้ว' && data &&(
+              <div>
+                <p style={{margin:'1rem 0'}}><strong>ทะเบียนสมรส- มีทะเบียนสมรส</strong></p>
+                <div style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
+                    columnGap: '20px', rowGap: '10px', }}> 
+                  {/* <p>ทะเบียนสมรส </p> */}
+                  <p>ชื่อ {data.spouse_name}</p>
+                  <p>สัญชาติ {data.spouse_nationality}</p>
+                  <p>อาชีพ {data.spouse_occupation}</p>
+                  <p>สถานที่ทำงาน {data.spouse_workplace}</p>
+                  <p>โทรศัพท์มือถือ {data.spoue_mobilephone}</p>
+                  <p>โทรศัพท์ที่ติดต่อได้ {data.spouse_phone}</p>
+                </div>
+                <div style={{ display: 'grid',  gridTemplateColumns: 'repeat(4, 1fr)', 
+                    columnGap: '20px', rowGap: '10px', margin:'1rem 0' }}>
+                  <p><strong>บุตร - มีบุตรจำนวน {data.childen_count} คน</strong></p>
+                  <p><strong>กำลังศึกษา {data.children_studying} คน</strong></p>
+                </div>
+                <div style={{margin:'2rem 0'}}>
+                  <p><strong>จำนวนบุตรอายุต่ำกว่า 6 ปี {data.child_baby_count} คน</strong></p>
+                  <p><strong>วันเดือนปีเกิดของบุตรที่อายุต่ำกว่า 6 ปี </strong></p>
+                  <ol style={{ margin: '0' }}>
+                    {data.child_birth.map((child, index) => (
+                      <li key={index}>เกิดวันที่ {formatDate(child)}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
             )}
-            {status === 'Single' && (
-              <p>ข้อมูลสำหรับสถานะโสด</p>
-            )}
-            {status === 'Engaged' && (
-              <p>ข้อมูลสำหรับสถานะหมั้น</p>
-            )}
-            {status === 'Divorced' && (
-              <p>ข้อมูลสำหรับสถานะหย่าร้าง</p>
-            )}
-            {status === 'Widowed' && (
-              <p>ข้อมูลสำหรับสถานะหม้าย</p>
-            )}
-            {status === 'Separated' && (
-              <p>ข้อมูลสำหรับสถานะแยกกันอยู่</p>
-            )}
+            {status === 'โสด' }
+            {status === 'หมั้น'}
+            {status === 'หย่าล้าง'}
+            {status === 'หม้าย' }
+            {status === 'Separated'}
           </div>
         )}
       </div>

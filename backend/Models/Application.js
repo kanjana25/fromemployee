@@ -6,10 +6,12 @@ const  applicationSchema = new mongoose.Schema({
     appy_date: Date,
     position:String,
     depertment:String,
-    file:{filename: String,
-    path: String,
-    size: Number,
-    uploadDateFile: { type: Date, default: Date.now },},
+    file:[{
+        filename: String,
+        path: String,
+        size: Number,
+        uploadDateFile: { type: Date, default: Date.now },
+    }],
     date: { type: Date, default: Date.now } ,
     image: {
         filename: String,
@@ -58,6 +60,7 @@ const  applicationSchema = new mongoose.Schema({
         },
         permanent_address: {
             status: String,
+            
             address_line: String,
             moo: String,
             alley: String,
@@ -79,7 +82,8 @@ const  applicationSchema = new mongoose.Schema({
     spoue_mobilephone: { type: String, default: 0 },
     childen_count:  { type: Number, default: 0 },
     children_studying: { type: Number, default: 0 },
-    child_birth:[{ type: Date }], // มาดูอีกที
+    child_baby_count:{ type: Number, default: 0 },//น้อยกว่าหกปี
+    child_birth:[{ type: Date }], 
     parent:{
         father:{
             father_name:String,
@@ -104,7 +108,6 @@ const  applicationSchema = new mongoose.Schema({
         company_name: String,
         address: String,
         position: String,
-        responsibilities: String,
         salary: Number,
         start_year: { type: Number },
         end_year: { type: Number },
@@ -112,8 +115,10 @@ const  applicationSchema = new mongoose.Schema({
         reason_for_leaving: String
     }],
     bank:{
+        has_account:{type: Boolean, required: true},
         bank_name: { type: String, default: null },
-        account_number: { type: String, default: null }
+        account_number: { type: String, default: null },
+        bank_branch_office: { type: String, default: null }
     },
     emergency_contact:{
         emergency_name:String,
