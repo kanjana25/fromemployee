@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
         cb(null,'uploads/'); 
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname); 
+      cb(null, Date.now() + '-' + file.originalname); 
     }
 });
 
@@ -119,46 +119,50 @@ const upload = multer({ storage: storage });
 }
 });
 
-const uploads = multer({ storage: storage }).array('files', 10);
+const uploads = multer({ storage: storage }).array('file', 10);
 
 router.post('/upload/file', uploads, async (req, res) => {
   try {
-    const files = req.files; 
-    if (!files || files.length === 0) {
-      return res.status(400).send('Please upload at least one file');
-    }
+      const files = req.files;
+      console.log('Files:', files);  // ตรวจสอบว่าไฟล์ถูกอัพโหลดหรือไม่
 
-    const applicationId = req.body.applicationId; 
-    if (!applicationId) {
-      return res.status(400).send('Please provide an application ID');
-    }
+      if (!files || files.length === 0) {
+          return res.status(400).send('Please upload at least one file');
+      }
 
-    const filesData = files.map(file => ({
-      filename: file.filename,
-      path: file.path.replace(/\\/g, '/'),
-      size: file.size,
-      uploadDateFile: Date.now()
-    }));
+      const applicationId = req.body.applicationId;
+      console.log('Application ID:', applicationId);  // ตรวจสอบค่า applicationId
 
-    const updatedApplication = await Application.findByIdAndUpdate(
-      applicationId, 
-      { $push: { files: { $each: filesData } } }, 
-      { new: true }
-    );
+      if (!applicationId) {
+          return res.status(400).send('Please provide an application ID');
+      }
 
-    if (!updatedApplication) {
-      return res.status(404).send('Application not found');
-    }
-    res.status(201).send(updatedApplication);
-    console.log('Files uploaded successfully');
+      const filesData = files.map(file => ({
+          filename: file.originalname,
+          path: file.path.replace(/\\/g, '/'),
+          size: file.size,
+          uploadDateFile: Date.now()
+      }));
+
+      console.log('Files Data:', filesData);  // ตรวจสอบค่า filesData
+
+      const updatedApplication = await Application.findByIdAndUpdate(
+          applicationId, 
+          { $push: { file: { $each: filesData } } }, 
+          { new: true }
+      );
+
+      if (!updatedApplication) {
+          return res.status(404).send('Application not found');
+      }
+
+      res.status(201).send(updatedApplication);
+      console.log('Files uploaded successfully');
   } catch (error) {
-    console.error('Error uploading files:', error);
-    res.status(400).send(error);
+      console.error('Error uploading files:', error);
+      res.status(400).send(error);
   }
 });
-
-
-
 
 
   module.exports = router;

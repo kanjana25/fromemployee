@@ -15,6 +15,7 @@ export default function Admin() {
             try {
                 const response = await axios.get('http://localhost:3200/applications');
                 setData(response.data); 
+                // console.log(data)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -41,11 +42,10 @@ export default function Admin() {
     }
 
     const handleDateChange = (selectedOption) => {
-        console.log(selectedOption);
-        if (selectedOption && selectedOption.value) { // ตรวจสอบว่า selectedOption และ selectedOption.value มีค่าหรือไม่
-            setSelectedDate(selectedOption.value); // ถ้ามีค่า ให้กำหนดค่าเป็น selectedOption.value
+        if (selectedOption && selectedOption.value) {
+            setSelectedDate(selectedOption.value);
         } else {
-            setSelectedDate(null); // ถ้าไม่มีค่า ให้กำหนดค่าเป็น null
+            setSelectedDate(null);
         }
     };
     
@@ -79,16 +79,24 @@ export default function Admin() {
                 return 'inherit';
         }
     };
-
-    const loadOptions = (inputValue) => {
-        const filteredOptions = data
-            .filter(row => row.date.includes(inputValue))
-            .map(row => ({
-                value: row.date, 
-                label: formatDate(row.date),
-            }));
-            console.log(filteredOptions)
-        return filteredOptions;
+    console.log(data)
+    
+    const loadOptions = async (inputValue) => {
+        try {
+            const response = await axios.get('http://localhost:3200/applications');
+            const Data = response.data;
+            const filteredOptions = Data
+                .filter((row) => row.date.includes(inputValue))
+                .map(row => ({
+                    value: row.date, 
+                    label: formatDate(row.date),
+                }));
+                console.log(filteredOptions)
+            return filteredOptions;
+        } catch (error) {
+            console.error('Error fetching options:', error);
+            return [];
+        }
     };
     
     

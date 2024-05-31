@@ -3,6 +3,7 @@ import Bar from '../component/bar';
 import { useNavigate,useParams } from 'react-router-dom'
 import axios from 'axios';
 
+
 /*
     TODO ตรงความสามารถพิเศษมีให้กรอกแค่นิดเดียว
     TODO ใส่ตารางมาพร้อมหลังบ้าน
@@ -43,6 +44,14 @@ function PageTwO(){
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('th-TH', options);
     };
+
+    
+
+    const handleFileClick = (filePath) => {
+        window.open(filePath, '_blank');
+        
+    };
+  
 
     return(
         <div>
@@ -173,26 +182,51 @@ function PageTwO(){
             <p><strong>เอกสารเพิ่มเติม</strong></p>
             </div>
 
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {data.file && data.file.length > 0 ? (
+                    data.file.map((file) => (
+                        
+                        <button 
+                            key={file._id} 
+                            style={{
+                                backgroundColor: '#EF4923',
+                                color: '#fff',
+                                boxShadow: '0 2px #bfbfbf',
+                                border: 'none',
+                                height: '2.5rem',
+                                width: '10rem',
+                                borderRadius: '0.5rem',
+                                fontSize: '15px',
+                                margin: '0.5rem 1rem',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => handleFileClick(`http://localhost:3200/${file.path}`)}
+                        >
+                            {file.filename}
+                        </button>
+                    ))
+                ) : (
+                    <p>ไม่มีเอกสารเพิ่มเติม</p>
+                )}
+            </div>
+
+            
+           
+{/* 
             <div>
                 <button style={{backgroundColor:'#EF4923',color:'#fff',
                 boxShadow:'0 2px #bfbfbf',border:'none',height:'2.5rem',
                 width:'10rem',borderRadius:'0.5rem',fontSize:'15px',
-                margin:'0.5rem 1rem',cursor:'pointer'}}>สำเนาบัตรประชาชน</button>
-            </div>
-            <div>
-                <button style={{backgroundColor:'#EF4923',color:'#fff',
-                boxShadow:'0 2px #bfbfbf',border:'none',height:'2.5rem',
-                width:'10rem',borderRadius:'0.5rem',fontSize:'15px',
-                margin:' 0.5rem 1rem ',cursor:'pointer'}}>สำเนาทะเบียนบ้าน</button>
-            </div>
+                margin:' 0.5rem 1rem ',cursor:'pointer'}} onClick={handleError}>สำเนาทะเบียนบ้าน</button>
+            </div> */}
             
             <div style={{display:'flex',alignContent:'center',justifyContent:'center',margin:'2rem 0 0'}}>
                 <button onClick={() => navigate(`/page-one/${id}`)}style={{
                 backgroundColor:'#EF4923',color:'#fff',border:'none',boxShadow:'none',
                 width:'4rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}}>ย้อนกลับ</button>
-                <button onClick={() => navigate(`/page-two/${id}`)} style={{
+                {/* <button onClick={() => navigate(`/page-two/${id}`)} style={{
                 backgroundColor:'#EF4923',color:'#fff',border:'none',boxShadow:'none',
-                width:'4rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}}>ถัดไป</button>
+                width:'4rem',height:'2rem',margin:'0.5rem',cursor:'pointer',}}>ถัดไป</button> */}
             </div>
         </div>
     )
